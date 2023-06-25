@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cliente Socket.IO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+</head>
+
+<body>
+    <h1>Cliente Socket.IO</h1>
+
+    <label for="nameInput">Seu Nome:</label>
+    <input type="text" id="nameInput" />
+
+    <input type="text" id="messageInput" placeholder="Digite sua mensagem" />
+    <button onclick="sendMessage()">Enviar</button>
+
+    <ul id="messages"></ul>
+
+    <script>
+        const socket = io('http://18.191.46.239:3000');
+
+        // Obter o nome do usuário
+        const nameInput = document.getElementById('nameInput');
+        let userName = '';
+
+        nameInput.addEventListener('input', function(event) {
+            userName = event.target.value;
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            const data = {
+                userName: userName,
+                message: message
+            };
+            socket.emit('sendMessage', data);
+            messageInput.value = '';
+        }
+
+        function addMessage(data) {
+            const messagesList = document.getElementById('messages');
+            const li = document.createElement('li');
+            li.innerText = data.userName + ': ' + data.message;
+            messagesList.appendChild(li);
+        }
+
+        socket.on('receiveMessage', function(data) {
+            addMessage(data);
+        });
+    </script>
+</body>
+
+</html>
